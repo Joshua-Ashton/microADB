@@ -11,6 +11,7 @@ find_package(uv REQUIRED)
 option(ADBD_AUTHENTICATION "adb authentication"    OFF)
 option(ADBD_AUTH_PUBKEY    "adb auth public key"   OFF)
 option(ADBD_FILE_SERVICE   "adb file sync service" ON)
+option(ADBD_USB_SERVICE    "adb usb service"       OFF)
 option(ADBD_SOCKET_SERVICE "adb socket service"    ON)
 
 option(ADBD_SHELL_SERVICE   "adb shell service" ON)
@@ -53,7 +54,7 @@ if(ADBD_SOCKET_SERVICE)
 endif()
 
 if(ADBD_SHELL_SERVICE)
-  set(ADB_SRCS ${ADB_SRCS} hal/shell_service_uv.c)
+set(ADB_SRCS ${ADB_SRCS} hal/shell_service_uv.c)    
 endif()
 
 add_executable(adbd ${ADB_SRCS})
@@ -69,6 +70,10 @@ target_compile_definitions(adbd PUBLIC -DCONFIG_ADBD_PRODUCT_DEVICE=${ADBD_PRODU
 target_compile_definitions(adbd PUBLIC -DCONFIG_ADBD_FEATURES=${ADBD_FEATURES})
 target_compile_definitions(adbd PUBLIC -DCONFIG_ADBD_TCP_SERVER="y")
 target_compile_definitions(adbd PUBLIC -DCONFIG_ADBD_TCP_SERVER_PORT=${ADBD_TCP_SERVER_PORT})
+
+if(ADBD_USB_SERVICE)
+  target_compile_definitions(adbd PUBLIC -DCONFIG_ADBD_TCP_SERVER="y")
+endif()
 
 if(ADBD_AUTHENTICATION)
   target_compile_definitions(adbd PUBLIC -DCONFIG_ADBD_AUTHENTICATION=1)
